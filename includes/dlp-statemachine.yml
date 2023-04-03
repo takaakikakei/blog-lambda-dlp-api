@@ -1,0 +1,25 @@
+name: ${self:service}-${self:provider.stage}
+# events:
+#   - http:
+#       path: '/'
+#       method: post
+definition:
+  StartAt: DlpFunc
+  States:
+    DlpFunc:
+      Type: Task
+      Parameters:
+        input.$: $
+        execution.$: $$
+      Resource:
+        Fn::GetAtt: [dlp_func, Arn]
+      Catch:
+        - ErrorEquals:
+            - States.ALL
+          ResultPath: $.error_info
+          Next: FailState
+      Next: SuccessState
+    SuccessState:
+      Type: Succeed
+    FailState:
+      Type: Fail

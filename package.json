@@ -1,0 +1,31 @@
+{
+  "name": "blog-lambda-dlp-api",
+  "version": "1.0.0",
+  "description": "LambdaからGCPのDLP APIを試すサービス",
+  "scripts": {
+    "fmt": "prettier --check serverless.yml includes/*.yml .github/workflows/*.yml",
+    "fmt:fix": "prettier --write serverless.yml includes/*.yml .github/workflows/*.yml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/classmethod-aws/template-ope-sls.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/classmethod-aws/template-ope-sls/issues"
+  },
+  "homepage": "https://github.com/classmethod-aws/template-ope-sls#readme",
+  "dependencies": {
+    "serverless": "^3.29.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
+    "npm-check-updates": "^16.10.0",
+    "prettier": "^2.8.7",
+    "serverless-prune-plugin": "^2.0.2",
+    "serverless-python-requirements": "^6.0.0",
+    "serverless-step-functions": "^3.13.0"
+  }
+}

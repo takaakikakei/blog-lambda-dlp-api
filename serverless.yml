@@ -1,0 +1,49 @@
+service: blog-lambda-dlp-api
+frameworkVersion: "3"
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, "ap-northeast-1"}
+  memorySize: 256
+  timeout: 60
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "ssm:GetParameter"
+            - "sts:AssumeRole"
+          Resource:
+            - "*"
+  layers:
+    - Ref: PythonRequirementsLambdaLayer
+    - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:14
+functions:
+  dlp_func:
+    handler: src/handlers/dlp_func.handler
+    environment:
+      GCP_PROJECT_ID: ${ssm(${self:provider.region}):/${self:provider.stage}/GCP_PROJECT_ID}
+      GCP_CREDENTIALS_JSON: ${ssm(${self:provider.region}):/${self:provider.stage}/GCP_CREDENTIALS_JSON}
+      POWERTOOLS_SERVICE_NAME: ${self:service}-${self:provider.stage}-dlp_func
+plugins:
+  - serverless-step-functions
+  - serverless-python-requirements
+  - serverless-prune-plugin
+stepFunctions:
+  stateMachines:
+    Dlp: ${file(includes/dlp-statemachine.yml)}
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    zip: true
+    slim: true
+    layer: true
+  prune:
+    automatic: true
+    number: 3
+package:
+  patterns:
+    - "!./**"
+    - ./src/**/*.py
+    - "!src/**/__pycache__/**"
